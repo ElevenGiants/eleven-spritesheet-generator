@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="https://raw.githubusercontent.com/swfobject/swfobject/9e0104326a8913918f2170f15a69d60624c4bf68/swfobject/src/swfobject.js"></script>
+</head>
+<body>
+<div id="flash-container-spritesheets"/>
+<script>
+    var asset_server = {{ asset_server|tojson }};
+    var base_hash = {{ base_hash|tojson }};
+    var ava_settings = {{ ava_settings|tojson }};
+    var api_url = {{ api_url|tojson }};
+    var player_tsid = {{ player_tsid|tojson }};
+
+    var flashvars = {
+        avatar_url: asset_server + '/c1.glitch.bz/swf/Avatar2011_67769.swf',
+        new_skin_coloring: 'false',
+        //TODO: is this one needed? We pass it into saveAll*
+        asset_host: asset_host_port,
+        ava_config_json: encodeURIComponent(JSON.stringify(urlifyHash(base_hash))),
+        ava_settings_json: encodeURIComponent(JSON.stringify(ava_settings)),
+        avatar_ready_callback_name: 'avatarReadyCallback',
+        avatar_ss_ready_callback_name: 'avatarSSReadyCallback',
+        save_sheets_callback_name: 'saveSheetsCallback',
+        save_singles_callback_name: 'saveSinglesCallback',
+        api_url: api_url,
+        asset_host: asset_server,
+        //TODO: we should be passing a token
+        api_token: player_tsid,
+    };
+    swfobject.embedSWF(
+        asset_server + '/c1.glitch.bz/swf/AvatarSheetMaker.swf',
+        'flash-container-spritesheets',
+        '1000', '700',
+        '10.1.0',
+        asset_server + '/c1.glitch.bz/swf/expressInstall_22314.swf',
+        flashvars,
+        {
+            allowscriptaccess: 'always',
+            allownetworking: 'all',
+            wmode: 'transparent'
+        }, null
+    );
+</script>
+</body>
+</html>
