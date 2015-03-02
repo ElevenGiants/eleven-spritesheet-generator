@@ -3,14 +3,15 @@ from itsdangerous import URLSafeSerializer, BadSignature
 
 
 class WebServer(object):
-    def __init__(self, shared, asset_url='http://192.168.23.23:8000/', api_url='http://192.168.23.23', secret_key='eleven_giants'):
+    def __init__(self, shared, asset_host_port='192.168.23.23:8000', asset_url='http://192.168.23.23:8000/', api_url='http://192.168.23.23:9001/', secret_key='eleven_giants'):
         self.app = Flask(__name__)
         self.app.secret_key = secret_key
         self.shared = shared
+        self.asset_host_port = asset_host_port
         self.asset_url = asset_url
         self.api_url = api_url
 
-        self.generate = self.route('/generate/<payload>', self.generate)
+        self.generate = self.app.route('/generate/<payload>')(self.generate)
         self.done = self.route('/done/<payload>', self.generate)
 
     def route(self, route, func):
@@ -38,8 +39,10 @@ class WebServer(object):
 
         data = {
             'tsid': tsid,
+            'asset_host_port': self.asset_host_port,
             'asset_server': self.asset_url,
-            'base_hash': pc_data.get('avatar_hash', {}),
+            'actuals': pc_data['actuals'],
+            'base_hash': pc_data['avatar_hash'],
             'ava_settings': {},
             'api_url': self.api_url,
             'player_tsid': tsid,
@@ -49,10 +52,10 @@ class WebServer(object):
     def done(self, payload):
         tsid = self.parse_payload(payload)
 
-        if tsid not in shared:
+        if tsid not in self.shared:
             abort(404)
 
-        pc_data = shared[tsid]
+        pc_data = self.shared[tsid]
         pc_data['event'].set()
 
         # no content

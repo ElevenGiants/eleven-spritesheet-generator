@@ -1,6 +1,11 @@
 import logging
-import multiprocessing
-import time
+import eventlet
+eventlet.monkey_patch()
+
+eventlet.monkey_patch()
+
+# import eventlet.debug
+# eventlet.debug.hub_blocking_detection(True)
 
 
 class SpritesheetGenerator(object):
@@ -18,34 +23,22 @@ class SpritesheetGenerator(object):
         root.addHandler(handler)
         root.setLevel(logging.DEBUG)
 
-        manager = multiprocessing.Manager()
-        shared = manager.dict()
+        shared = {}
 
-        self.celery_worker = multiprocessing.Process(name='celery_worker', target=self.celery_worker, args=(shared,))
-        self.celery_worker.start()
-        self.flask_server = multiprocessing.Process(name='flask_server', target=self.flask_worker, args=(shared,))
-        self.flask_server.start()
-        try:
-            while True:
-                time.sleep(0.1)
-        finally:
-            self.celery_worker.terminate()
-            self.flask_server.terminate()
+        self.celery_worker = eventlet.spawn(self.celery_worker, shared)
+        self.flask_server = eventlet.spawn(self.flask_worker, shared)
+        self.celery_worker.wait()
+        self.flask_server.wait()
 
     def celery_worker(self, shared):
         import eleven.tasks
         from eleven.tasks import app as celery_app
 
         eleven.tasks.shared = shared
-        celery_app.worker_main()
+        celery_app.worker_main(['', '-P', 'eventlet'])
 
     def flask_worker(self, shared):
         import eleven.http
-        '''
-        from eleven.http import app as flask_app
-
-        eleven.http.shared = shared
-        '''
         flask_app = eleven.http.WebServer(shared)
         flask_app.run(host='0.0.0.0', debug=False)
 
