@@ -12,7 +12,7 @@ class WebServer(object):
         self.api_url = api_url
 
         self.generate = self.app.route('/generate/<payload>')(self.generate)
-        self.done = self.route('/done/<payload>', self.generate)
+        self.done = self.route('/done/<payload>', self.done)
 
     def route(self, route, func):
         return self.app.route(route)(func)
@@ -56,10 +56,10 @@ class WebServer(object):
             abort(404)
 
         pc_data = self.shared[tsid]
-        pc_data['event'].set()
+        pc_data['event'].send()
 
         # no content
-        abort(204)
+        return ('done', 204)
 
     def run(self, *args, **kwargs):
         return self.app.run(*args, **kwargs)

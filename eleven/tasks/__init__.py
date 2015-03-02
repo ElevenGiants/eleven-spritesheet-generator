@@ -25,9 +25,11 @@ def generateSpritesheets(pc_tsid, actuals, base_hash):
         'avatar_hash': base_hash,
         'event': event,
     }
-    log.warning('%r %r %r', pc_tsid, actuals, base_hash)
+    log.info('generateSpritesheets started for %r', pc_tsid)
+    log.debug('generateSpritesheets data %r %r %r', pc_tsid, actuals, base_hash)
     # TODO: start up xvfb and chrome with the url
 
     # wait for the http worker to send us an event saying it's finished
     # TODO: timeout
     event.wait()
+    log.info('generateSpritesheets done for %r', pc_tsid)
