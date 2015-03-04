@@ -15,5 +15,6 @@ setup(
         'subprocess32>=3.2.6',
         'Flask>=0.10.1',
         'eventlet>=0.17.1',
+        'reversefold.util>=1.0.4',
     ],
 )
