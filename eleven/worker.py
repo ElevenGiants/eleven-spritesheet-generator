@@ -37,10 +37,7 @@ class SpritesheetGenerator(object):
 
     def celery_worker(self, shared):
         import eleven.tasks
-        from eleven.tasks import app as celery_app
-
-        eleven.tasks.shared = shared
-        eleven.tasks.secret_key = config['secret_key']
+        celery_app = eleven.tasks.ElevenCelery(shared, config['secret_key'])
         celery_app.worker_main(['', '-P', 'eventlet'])
 
     def flask_worker(self, shared):
