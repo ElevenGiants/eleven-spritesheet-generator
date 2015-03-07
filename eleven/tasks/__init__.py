@@ -7,7 +7,7 @@ from celery import Celery
 from celery.utils.log import get_task_logger
 from eventlet.event import Event
 from eventlet.green import subprocess
-from itsdangerous import URLSafeSerializer, BadSignature
+from itsdangerous import URLSafeSerializer
 from reversefold.util import multiproc
 
 

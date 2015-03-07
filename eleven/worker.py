@@ -2,8 +2,6 @@ import logging
 import eventlet
 eventlet.monkey_patch()
 
-eventlet.monkey_patch()
-
 # import eventlet.debug
 # eventlet.debug.hub_blocking_detection(True)
 
@@ -40,7 +38,7 @@ class SpritesheetGenerator(object):
     def flask_worker(self, shared):
         import eleven.http
         flask_app = eleven.http.WebServer(shared)
-        flask_app.run(host='0.0.0.0', debug=False)
+        flask_app.run(host='127.0.0.1', port=5000, debug=False)
 
 
 if __name__ == '__main__':
