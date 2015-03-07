@@ -5,6 +5,13 @@ eventlet.monkey_patch()
 # import eventlet.debug
 # eventlet.debug.hub_blocking_detection(True)
 
+config = {
+    'asset_host_port': '192.168.23.23:8000',
+    'asset_url': 'http://192.168.23.23:8000/',
+    'api_url': 'http://192.168.23.23:9001/',
+    'secret_key': 'eleven_giants',
+}
+
 
 class SpritesheetGenerator(object):
     def __init__(self):
@@ -33,11 +40,12 @@ class SpritesheetGenerator(object):
         from eleven.tasks import app as celery_app
 
         eleven.tasks.shared = shared
+        eleven.tasks.secret_key = config['secret_key']
         celery_app.worker_main(['', '-P', 'eventlet'])
 
     def flask_worker(self, shared):
         import eleven.http
-        flask_app = eleven.http.WebServer(shared)
+        flask_app = eleven.http.WebServer(shared, **config)
         flask_app.run(host='127.0.0.1', port=5000, debug=False)
 
 

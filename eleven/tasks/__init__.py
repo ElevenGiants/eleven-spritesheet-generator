@@ -12,6 +12,7 @@ from reversefold.util import multiproc
 
 
 shared = None
+secret_key = None
 
 log = get_task_logger(__name__)
 
@@ -60,7 +61,7 @@ def generateSpritesheets(pc_tsid, actuals, base_hash):
             raise Error('No free display found for use with Xvfb')
 
         # TODO: get this from the web app
-        tsid_signed = URLSafeSerializer('eleven_giants').dumps(pc_tsid)
+        tsid_signed = URLSafeSerializer(secret_key).dumps(pc_tsid)
 
         env = os.environ.copy()
         env['DISPLAY'] = ':%i' % (DISPLAY_NUM,)
