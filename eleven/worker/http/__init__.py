@@ -3,13 +3,14 @@ from itsdangerous import URLSafeSerializer, BadSignature
 
 
 class WebServer(object):
-    def __init__(self, shared, asset_host_port='192.168.23.23:8000', asset_url='http://192.168.23.23:8000/', api_url='http://192.168.23.23:9001/', secret_key='eleven_giants'):
+    def __init__(self, shared, config):
         self.app = Flask(__name__)
-        self.app.secret_key = secret_key
         self.shared = shared
-        self.asset_host_port = asset_host_port
-        self.asset_url = asset_url
-        self.api_url = api_url
+
+        self.app.secret_key = config.secret_key
+        self.asset_host_port = config.asset_host_port
+        self.asset_url = config.asset_url
+        self.api_url = config.api_url
 
         self.generate = self.app.route('/generate/<payload>')(self.generate)
         self.done = self.route('/done/<payload>', self.done)

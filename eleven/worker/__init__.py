@@ -1,16 +1,10 @@
 import logging
 import eventlet
 eventlet.monkey_patch()
+from eleven.worker import config, http, tasks
 
 # import eventlet.debug
 # eventlet.debug.hub_blocking_detection(True)
-
-config = {
-    'asset_host_port': '192.168.23.23:8000',
-    'asset_url': 'http://192.168.23.23:8000/',
-    'api_url': 'http://192.168.23.23:9001/',
-    'secret_key': 'eleven_giants',
-}
 
 
 class SpritesheetGenerator(object):
@@ -36,14 +30,12 @@ class SpritesheetGenerator(object):
         self.flask_server.wait()
 
     def celery_worker(self, shared):
-        import eleven.tasks
-        celery_app = eleven.tasks.ElevenCelery(shared, config['secret_key'])
+        celery_app = tasks.ElevenCelery(shared, config)
         celery_app.worker_main(['', '-P', 'eventlet'])
 
     def flask_worker(self, shared):
-        import eleven.http
-        flask_app = eleven.http.WebServer(shared, **config)
-        flask_app.run(host='127.0.0.1', port=5000, debug=False)
+        flask_app = http.WebServer(shared, config)
+        flask_app.run(host='127.0.0.1', port=config.http_port, debug=False)
 
 
 if __name__ == '__main__':
