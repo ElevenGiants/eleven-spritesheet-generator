@@ -1,6 +1,6 @@
-import logging
 import eventlet
 eventlet.monkey_patch()
+import logging
 from eleven.worker import config, http, tasks
 
 # import eventlet.debug
@@ -30,11 +30,11 @@ class SpritesheetGenerator(object):
         self.flask_server.wait()
 
     def celery_worker(self, shared):
-        celery_app = tasks.ElevenCelery(shared, config)
+        celery_app = tasks.ElevenCelery(shared, config.secret_key, config.task_timeout, config.http_port, config.amqp_url)
         celery_app.worker_main(['', '-P', 'eventlet'])
 
     def flask_worker(self, shared):
-        flask_app = http.WebServer(shared, config)
+        flask_app = http.WebServer(shared, config.secret_key, config.asset_host_port, config.asset_url, config.api_url)
         flask_app.run(host='127.0.0.1', port=config.http_port, debug=False)
 
 

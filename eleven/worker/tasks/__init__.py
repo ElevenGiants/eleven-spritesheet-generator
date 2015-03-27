@@ -16,16 +16,16 @@ class Error(StandardError):
 
 
 class ElevenCelery(object):
-    def __init__(self, shared, config):
+    def __init__(self, shared, secret_key, task_timeout, http_port, amqp_url):
         self.shared = shared
 
-        self.secret_key = config.secret_key
-        self.task_timeout = config.task_timeout
-        self.http_port = config.http_port
+        self.secret_key = secret_key
+        self.task_timeout = task_timeout
+        self.http_port = http_port
 
         self.log = get_task_logger(__name__)
 
-        self.app = Celery('eleven.tasks', broker=config.amqp_url)
+        self.app = Celery('eleven.tasks', broker=amqp_url)
         # self.app.conf.CELERYD_HIJACK_ROOT_LOGGER = False
         self.app.conf.CELERYD_LOG_LEVEL = logging.DEBUG
 
