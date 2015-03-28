@@ -16,5 +16,7 @@ setup(
         'Flask>=0.10.1',
         'eventlet>=0.17.1',
         'reversefold.util>=1.0.4',
+        'docopt>=0.6.2',
     ],
+    scripts=['scripts/eleven_spritesheet_generator_worker.py'],
 )
