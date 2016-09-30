@@ -59,6 +59,7 @@ class ElevenCelery(object):
                 (_, _, xvfb_threads) = multiproc.run_subproc(xvfb, '[xvfb]    ', wait=False)
                 # sleep for 1s to see if it's going to die
                 time.sleep(1)
+                xvfb.poll()
                 if xvfb.returncode is None:
                     # Xvfb is running
                     break
