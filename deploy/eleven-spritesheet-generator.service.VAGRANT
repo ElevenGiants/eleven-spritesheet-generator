@@ -1,0 +1,16 @@
+# Systemd unit file for running the spritesheet generator as a service on
+# the Eleven Giants Vagrant dev box.
+
+[Unit]
+Description=Eleven Giants Spritesheet Generator
+Requires=rabbitmq-server.service
+After=rabbitmq-server.service
+
+[Service]
+User=vagrant
+Group=vagrant
+WorkingDirectory=/vagrant/eleven-spritesheet-generator
+ExecStart=/bin/bash -c 'source venv/bin/activate && python -m scripts/eleven_spritesheet_generator_worker --config=./config.py'
+
+[Install]
+WantedBy=multi-user.target

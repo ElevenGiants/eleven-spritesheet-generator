@@ -1,0 +1,22 @@
+# Systemd unit file for running the spritesheet generator as a service.
+# The following configuration assumes the package is installed in:
+#
+# /eleven/eleven-spritesheet-generator
+#
+# and a virtual Python environment called "venv" is present there.
+# It also assumes RabbitMQ is running as a systemd service on the same host.
+# Please adjust as needed.
+
+[Unit]
+Description=Eleven Giants Spritesheet Generator
+Requires=rabbitmq-server.service
+After=rabbitmq-server.service
+
+[Service]
+User=eleven
+Group=eleven
+WorkingDirectory=/eleven/eleven-spritesheet-generator
+ExecStart=/bin/bash -c 'source venv/bin/activate && python -m scripts/eleven_spritesheet_generator_worker --config=./config.py'
+
+[Install]
+WantedBy=multi-user.target
